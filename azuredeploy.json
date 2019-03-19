@@ -16,11 +16,7 @@
 	"variables": {
 		"nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', 'sanbox-nsg')]",
 		"vnetId": "[resourceId(resourceGroup().name,'Microsoft.Network/virtualNetworks', 'sanbox-vnet')]",
-		"subnetRef": "[concat(variables('vnetId'), '/subnets/', 'default')]",
-		"extensionName": "DockerExtension",
-		"vmName": "MyDockerVM",
-		"extensionScript": "script",
-		"extensionsName": "extensionsScript"
+		"subnetRef": "[concat(variables('vnetId'), '/subnets/', 'default')]"
 	},
 	"resources": [
 		{
@@ -158,8 +154,7 @@
 			"apiVersion": "2018-06-01",
 			"location": "southeastasia",
 			"dependsOn": [
-				"[concat('Microsoft.Network/networkInterfaces/', 'sanbox673')]",
-				"[concat('Microsoft.Storage/storageAccounts/', 'sanboxdiag')]"
+				"[concat('Microsoft.Network/networkInterfaces/', 'sanbox673')]"
 			],
 			"properties": {
 				"hardwareProfile": {
@@ -190,25 +185,7 @@
 					"computerName": "sanbox",
 					"adminUsername": "[parameters('adminUsername')]",
 					"adminPassword": "[parameters('adminPassword')]"
-				},
-				"diagnosticsProfile": {
-					"bootDiagnostics": {
-						"enabled": true,
-						"storageUri": "[concat('https://', 'sanboxdiag', '.blob.core.windows.net/')]"
-					}
 				}
-			},
-			"tags": {}
-		},
-		{
-			"name": "sanboxdiag",
-			"type": "Microsoft.Storage/storageAccounts",
-			"apiVersion": "2018-07-01",
-			"location": "southeastasia",
-			"properties": {},
-			"kind": "Storage",
-			"sku": {
-				"name": "Standard_LRS"
 			},
 			"tags": {}
 		},
