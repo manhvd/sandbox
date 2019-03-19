@@ -1,0 +1,243 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"adminUsername": {
+			"type": "string"
+		},
+		"adminPassword": {
+			"type": "secureString"
+		},
+		"publicIpAddressesName": {
+			"type": "string",
+			"defaultValue": "sandbox-ip"
+		}
+	},
+	"variables": {
+		"nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', 'sanbox-nsg')]",
+		"vnetId": "[resourceId(resourceGroup().name,'Microsoft.Network/virtualNetworks', 'sanbox-vnet')]",
+		"subnetRef": "[concat(variables('vnetId'), '/subnets/', 'default')]",
+		"extensionName": "DockerExtension",
+		"vmName": "MyDockerVM",
+		"extensionScript": "script",
+		"extensionsName": "extensionsScript"
+	},
+	"resources": [
+		{
+			"name": "sanbox673",
+			"type": "Microsoft.Network/networkInterfaces",
+			"apiVersion": "2018-10-01",
+			"location": "southeastasia",
+			"dependsOn": [
+				"[concat('Microsoft.Network/networkSecurityGroups/', 'sanbox-nsg')]",
+				"[concat('Microsoft.Network/virtualNetworks/', 'sanbox-vnet')]",
+				"[concat('Microsoft.Network/publicIpAddresses/', 'sandbox-ip')]"
+			],
+			"properties": {
+				"ipConfigurations": [
+					{
+						"name": "ipconfig1",
+						"properties": {
+							"subnet": {
+								"id": "[variables('subnetRef')]"
+							},
+							"privateIPAllocationMethod": "Dynamic",
+							"publicIpAddress": {
+								"id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', 'sandbox-ip')]"
+							}
+						}
+					}
+				],
+				"networkSecurityGroup": {
+					"id": "[variables('nsgId')]"
+				}
+			},
+			"tags": {}
+		},
+		{
+			"name": "sanbox-nsg",
+			"type": "Microsoft.Network/networkSecurityGroups",
+			"apiVersion": "2018-08-01",
+			"location": "southeastasia",
+			"properties": {
+				"securityRules": [
+					{
+						"name": "HTTP",
+						"properties": {
+							"priority": 300,
+							"protocol": "TCP",
+							"access": "Allow",
+							"direction": "Inbound",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "80"
+						}
+					},
+					{
+						"name": "SSH",
+						"properties": {
+							"priority": 320,
+							"protocol": "TCP",
+							"access": "Allow",
+							"direction": "Inbound",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "22"
+						}
+					},
+					{
+						"name": "HTTPS",
+						"properties": {
+							"priority": 340,
+							"protocol": "TCP",
+							"access": "Allow",
+							"direction": "Inbound",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "443"
+						}
+					},
+					{
+						"name": "HTTP1",
+						"properties": {
+							"priority": 360,
+							"protocol": "TCP",
+							"access": "Allow",
+							"direction": "Inbound",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "8080"
+						}
+					}
+				]
+			},
+			"tags": {}
+		},
+		{
+			"name": "sanbox-vnet",
+			"type": "Microsoft.Network/virtualNetworks",
+			"apiVersion": "2018-08-01",
+			"location": "southeastasia",
+			"properties": {
+				"addressSpace": {
+					"addressPrefixes": [
+						"10.0.0.0/24"
+					]
+				},
+				"subnets": [
+					{
+						"name": "default",
+						"properties": {
+							"addressPrefix": "10.0.0.0/24"
+						}
+					}
+				]
+			},
+			"tags": {}
+		},
+		{
+			"name": "sandbox-ip",
+			"type": "Microsoft.Network/publicIpAddresses",
+			"apiVersion": "2018-08-01",
+			"location": "southeastasia",
+			"properties": {
+				"publicIpAllocationMethod": "Static"
+			},
+			"sku": {
+				"name": "Basic"
+			},
+			"tags": {}
+		},
+		{
+			"name": "sanbox",
+			"type": "Microsoft.Compute/virtualMachines",
+			"apiVersion": "2018-06-01",
+			"location": "southeastasia",
+			"dependsOn": [
+				"[concat('Microsoft.Network/networkInterfaces/', 'sanbox673')]",
+				"[concat('Microsoft.Storage/storageAccounts/', 'sanboxdiag')]"
+			],
+			"properties": {
+				"hardwareProfile": {
+					"vmSize": "Standard_F1"
+				},
+				"storageProfile": {
+					"osDisk": {
+						"createOption": "fromImage",
+						"managedDisk": {
+							"storageAccountType": "StandardSSD_LRS"
+						}
+					},
+					"imageReference": {
+						"publisher": "Canonical",
+						"offer": "UbuntuServer",
+						"sku": "16.04-LTS",
+						"version": "latest"
+					}
+				},
+				"networkProfile": {
+					"networkInterfaces": [
+						{
+							"id": "[resourceId('Microsoft.Network/networkInterfaces', 'sanbox673')]"
+						}
+					]
+				},
+				"osProfile": {
+					"computerName": "sanbox",
+					"adminUsername": "[parameters('adminUsername')]",
+					"adminPassword": "[parameters('adminPassword')]"
+				},
+				"diagnosticsProfile": {
+					"bootDiagnostics": {
+						"enabled": true,
+						"storageUri": "[concat('https://', 'sanboxdiag', '.blob.core.windows.net/')]"
+					}
+				}
+			},
+			"tags": {}
+		},
+		{
+			"name": "sanboxdiag",
+			"type": "Microsoft.Storage/storageAccounts",
+			"apiVersion": "2018-07-01",
+			"location": "southeastasia",
+			"properties": {},
+			"kind": "Storage",
+			"sku": {
+				"name": "Standard_LRS"
+			},
+			"tags": {}
+		},
+		{
+			"type": "Microsoft.Compute/virtualMachines/extensions",
+			"name": "[concat('sanbox','/installcustomscript')]",
+			"apiVersion": "2015-05-01-preview",
+			"location": "southeastasia",
+			"dependsOn": [
+				"[concat('Microsoft.Compute/virtualMachines/', 'sanbox')]"
+			],
+			"properties": {
+				"publisher": "Microsoft.Azure.Extensions",
+				"type": "CustomScript",
+				"typeHandlerVersion": "2.0",
+				"autoUpgradeMinorVersion": true,
+				"settings": {
+					"fileUris": [
+						"https://raw.githubusercontent.com/manhvd/docker_backend/master/script/start.sh"
+					],
+					"commandToExecute": "[concat('sh ','start.sh ', reference(parameters('publicIpAddressesName'),'2016-03-30').IpAddress)]"
+				}
+			}
+		}
+	],
+	"outputs": {
+		"resourceID": {
+			"value": "[reference(parameters('publicIpAddressesName'),'2016-03-30').IpAddress]",
+			"type": "string"
+		}
+	}
+}
