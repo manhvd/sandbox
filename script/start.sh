@@ -19,19 +19,21 @@ sudo apt-get -y install nginx
 
 sudo service nginx stop
 
-git clone git://github.com/manhvd/docker_backend \
+# git clone git://github.com/manhvd/docker_backend \
 
-cd docker_backend/FE/assets
+git clone git://github.com/manhvd/sanbox_new \
+
+# cd docker_backend/FE/assets
  
-sudo sed -i "s/localhost/$1/g" config.json
+# sudo sed -i "s/localhost/$1/g" config.json
 
-cd ../..
+# cd ../..
 
-cd config
+# cd config
 
-sudo sed -i "s/localhost/$1/g" default.json
+# sudo sed -i "s/localhost/$1/g" default.json
 
-cd ..
+# cd ..
  
 sudo docker-compose -f docker-compose.yml down \
 
