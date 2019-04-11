@@ -108,19 +108,6 @@
 							"destinationAddressPrefix": "*",
 							"destinationPortRange": "8080"
 						}
-					},
-					{
-						"name": "HTTP2",
-						"properties": {
-							"priority": 360,
-							"protocol": "TCP",
-							"access": "Allow",
-							"direction": "Inbound",
-							"sourceAddressPrefix": "*",
-							"sourcePortRange": "*",
-							"destinationAddressPrefix": "*",
-							"destinationPortRange": "8081"
-						}
 					}
 				]
 			},
