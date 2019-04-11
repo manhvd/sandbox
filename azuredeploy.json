@@ -23,7 +23,7 @@
 			"name": "sanbox673",
 			"type": "Microsoft.Network/networkInterfaces",
 			"apiVersion": "2018-10-01",
-			"location": "southeastasia",
+			"location": "southeastasia", 
 			"dependsOn": [
 				"[concat('Microsoft.Network/networkSecurityGroups/', 'sanbox-nsg')]",
 				"[concat('Microsoft.Network/virtualNetworks/', 'sanbox-vnet')]",
