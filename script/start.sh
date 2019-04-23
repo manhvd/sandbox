@@ -15,12 +15,7 @@ sudo docker run --rm hello-world
 # Change VERSION variable below if you need other version
 VERSION=1.18.0; sudo curl -Lo /usr/local/bin/docker-compose https://github.com/docker/compose/releases/download/$VERSION/docker-compose-`uname -s`-`uname -m` && sudo chmod +x /usr/local/bin/docker-compose
 
-sudo apt-get -y install nginx
-
-sudo service nginx stop
-
 git clone git://github.com/manhvd/sanbox_new \
-
 
 cd sanbox_new/config
  

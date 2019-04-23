@@ -217,7 +217,7 @@
 				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"fileUris": [
-						"https://raw.githubusercontent.com/manhvd/sanbox_new/master/script/start.sh"
+						"https://raw.githubusercontent.com/manhvd/sandbox/master/script/start.sh"
 					],
 					"commandToExecute": "[concat('sh ','start.sh ', reference(parameters('publicIpAddressesName'),'2016-03-30').IpAddress)]"
 				}
