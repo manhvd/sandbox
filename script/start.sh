@@ -15,7 +15,7 @@ sudo docker run --rm hello-world
 # Change VERSION variable below if you need other version
 VERSION=1.18.0; sudo curl -Lo /usr/local/bin/docker-compose https://github.com/docker/compose/releases/download/$VERSION/docker-compose-`uname -s`-`uname -m` && sudo chmod +x /usr/local/bin/docker-compose
 
-git clone https://github.com/manhvd/package_sandbox \
+git clone https://AkachainDemo:akachain2019Demo@github.com/AkachainDemo/package.git \
 
 cd sanbox_new/config
  
