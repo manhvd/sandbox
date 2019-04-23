@@ -17,7 +17,7 @@ VERSION=1.18.0; sudo curl -Lo /usr/local/bin/docker-compose https://github.com/d
 
 git clone https://AkachainDemo:akachain2019Demo@github.com/AkachainDemo/package.git \
 
-cd sanbox_new/config
+cd package/config
  
 sudo sed -i "s/localhost/$1/g" default.json
 
